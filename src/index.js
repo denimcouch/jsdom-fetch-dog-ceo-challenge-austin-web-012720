@@ -1,79 +1,84 @@
-console.log('%c HI', 'color: firebrick')
+// API endpoints
+const imgURL = "https://dog.ceo/api/breeds/image/random/4";
+const breedURL = "https://dog.ceo/api/breeds/list/all";
 
-let allDogs;
-let dogBreeds;
+let allBreeds;
 
-document.addEventListener('DOMContentLoaded', () => {
-  fetchDogPics();
-  fetchBreedList();
-  document.getElementById('breed-dropdown').addEventListener('change', renderBreedByLetter);
+document.addEventListener("DOMContentLoaded", () => {
+  fetchDogImages();
+  fetchDogBreeds();
+  let filterChoice = document.getElementById("breed-dropdown");
+  filterChoice.addEventListener("change", (e) => {
+    filterBreeds(e.target.value);
+  });
 });
 
-function fetchBreedList() {
-    const breedUrl = 'https://dog.ceo/api/breeds/list/all'
-    fetch(breedUrl)
-        .then((response) => response.json())
-        .then((json) => {
-            dogBreeds = json.message;
-            renderBreeds();
-            
-        })
-};
+// Fetches 4 random photos to render
+function fetchDogImages() {
+  fetch(imgURL)
+    .then((res) => res.json())
+    .then((imageData) => {
+      const images = imageData.message;
+      renderDogImages(images);
+    });
+}
 
-function fetchDogPics() {
-  const imgUrl = "https://dog.ceo/api/breeds/image/random/4"
-  fetch(imgUrl) 
-   .then((response) => response.json())
-   .then((json) => {
-     allDogs = json.message;
-     renderDogs();
-   });     
-};
-
-function renderBreeds() {
-    let listContainer = document.getElementById('dog-breeds');
-    for(const breed in dogBreeds) {
-        let listItem = document.createElement('li');
-        listItem.innerHTML = breed;
-        listItem.addEventListener("mouseover", function() {
-          listItem.style.color = getRandomColor();
-        });
-        listContainer.appendChild(listItem); 
-    };
-};
-
-function renderDogs() {
-  let imageContainer = document.getElementById('dog-image-container'); 
-  allDogs.forEach(imageURL => {
-    let image = document.createElement('IMG');
-    image.setAttribute('src', imageURL);
-    image.setAttribute('width', 300);
-    imageContainer.appendChild(image);
+// Renders images to the page
+function renderDogImages(imagesArray) {
+  const imgCont = document.getElementById("dog-image-container");
+  imagesArray.forEach((image) => {
+    const imgDiv = document.createElement("div");
+    const img = document.createElement("img");
+    imgDiv.classList.add("card");
+    img.src = image;
+    imgDiv.append(img);
+    imgCont.append(imgDiv);
   });
-};
+}
 
-function renderBreedByLetter() {
-  let dropDownValue = document.getElementById('breed-dropdown').value
-  let listContainer = document.getElementById('dog-breeds');
-  listContainer.innerHTML = "";
-  for(const breed in dogBreeds) {
-    console.log(breed)
-    if (breed.charAt(0) == dropDownValue){
-      let listItem = document.createElement('li');
-      listItem.innerHTML = breed;
-      listItem.addEventListener("mouseover", function() {
-        listItem.style.color = getRandomColor();
-      });
-      listContainer.appendChild(listItem);
-    } 
-  };
-};
+function fetchDogBreeds() {
+  fetch(breedURL)
+    .then((res) => res.json())
+    .then((breedsData) => {
+      allBreeds = breedsData.message;
+      renderDogBreeds();
+    });
+}
 
-function getRandomColor() {
-    var letters = '0123456789ABCDEF';
-    var color = '#';
-    for (var i = 0; i < 6; i++) {
-      color += letters[Math.floor(Math.random() * 16)];
+function renderDogBreeds() {
+  let dogList = document.getElementById("dog-breeds");
+  for (breed in allBreeds) {
+    let li = document.createElement("li");
+    li.innerText = breed;
+    li.addEventListener("mouseover", () => {
+      li.style.color = "blue";
+    });
+    li.addEventListener("click", () => {
+      li.style.color = "red";
+    });
+    dogList.append(li);
+  }
+}
+
+function filterBreeds(filtLetter) {
+  let dogList = document.getElementById("dog-breeds");
+  dogList.innerHTML = "";
+  const filtered = [];
+  for (breed in allBreeds) {
+    if (breed.charAt(0) == filtLetter) {
+      filtered.push(breed);
     }
-    return color;
-};
+  }
+  filtered.forEach((breed) => {
+    let li = document.createElement("li");
+    li.innerText = breed;
+    li.addEventListener("mouseover", () => {
+      li.style.color = "blue";
+    });
+    li.addEventListener("click", () => {
+      li.style.color = "red";
+    });
+    dogList.append(li);
+  });
+  console.log(filtered);
+}
