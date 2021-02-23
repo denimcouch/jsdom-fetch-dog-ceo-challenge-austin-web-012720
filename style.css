@@ -3,3 +3,21 @@
   margin: 0;
   box-sizing: border-box;
 }
+
+img {
+  width: 100%;
+}
+
+ul {
+  list-style: none;
+}
+
+#dog-image-container {
+ display: flex;
+ justify-content: space-between;
+ margin: 1rem 0;
+}
+
+.card {
+  width: 250px;
+}

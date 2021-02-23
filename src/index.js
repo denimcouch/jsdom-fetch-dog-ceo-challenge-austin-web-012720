@@ -40,14 +40,15 @@ function fetchDogBreeds() {
   fetch(breedURL)
     .then((res) => res.json())
     .then((breedsData) => {
-      allBreeds = breedsData.message;
-      renderDogBreeds();
+      allBreeds = Object.keys(breedsData.message);
+      renderDogBreeds(allBreeds);
     });
 }
 
-function renderDogBreeds() {
+function renderDogBreeds(breedsArray) {
   let dogList = document.getElementById("dog-breeds");
-  for (breed in allBreeds) {
+  dogList.innerHTML = "";
+  breedsArray.forEach( breed => {
     let li = document.createElement("li");
     li.innerText = breed;
     li.addEventListener("mouseover", () => {
@@ -57,28 +58,9 @@ function renderDogBreeds() {
       li.style.color = "red";
     });
     dogList.append(li);
-  }
+  })
 }
 
 function filterBreeds(filtLetter) {
-  let dogList = document.getElementById("dog-breeds");
-  dogList.innerHTML = "";
-  const filtered = [];
-  for (breed in allBreeds) {
-    if (breed.charAt(0) == filtLetter) {
-      filtered.push(breed);
-    }
-  }
-  filtered.forEach((breed) => {
-    let li = document.createElement("li");
-    li.innerText = breed;
-    li.addEventListener("mouseover", () => {
-      li.style.color = "blue";
-    });
-    li.addEventListener("click", () => {
-      li.style.color = "red";
-    });
-    dogList.append(li);
-  });
-  console.log(filtered);
+  renderDogBreeds(allBreeds.filter( breed => breed.charAt(0) == filtLetter))
 }
